@@ -2,29 +2,24 @@ const express=require("express")
 
 const app=express();
 
-const {adminAuth}=require("./middleware/auth")
-
-const {userAuth}=require("./middleware/userAuth")
-
-app.use("/admin",adminAuth)
 
 
-app.get("/admin/user",(req,res)=>
+
+
+app.get("/user",(req,res)=>
+{
+    throw new Error("adfvfjvfd")
+    res.send("user data")
+})
+
+
+app.use("/",(err,req,res,next)=>
+{
+    if(err)
     {
-        console.log("admin/user")
-        res.send("this is admin user")
-    })
-
-
-app.get("/admin/user/id",(req,res)=>
-    {
-        console.log("admin/user/id")
-        res.send("this is admin user id")
-    })
-
-
-
-
+        res.status(501).send("something went wrong")
+    }
+})
 
 
 
