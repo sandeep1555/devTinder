@@ -5,12 +5,17 @@ const app=express();
 
 app.listen(7777)
 
-app.use("/hello",(req,res)=>
+
+app.use("/test",(req,res)=>
+    {
+        res.send("namaste nodejs")
+    })
+app.get("/user",(req,res)=>
 {
-      res.send("hello world")
+    res.send({fisrname:"Sandeep",lastname:"dasari"})
+})
+app.post("/user",(req,res)=>
+{
+    res.send("data send to database")
 })
 
-app.use("/info",(req,res)=>
-{
-    res.send("hi this is info page")
-})
