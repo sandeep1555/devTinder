@@ -38,13 +38,10 @@ const userSchema= new mongoose.Schema({
     },
     gender:{
         type:String,
-        validate(value)
-        {
-            if(!['male','female','others'].includes(value))
-            {
-                throw new Error("Gender is not valid")
-            }
-        }
+        enum: {
+            values: ["Male", "Female", "Other"],
+            message: `{VALUE} is not a valid gender type`,
+          },
 
     },
     photoURL:{
@@ -52,20 +49,27 @@ const userSchema= new mongoose.Schema({
     
     
     },
-    about:{
-        type:String,
-        default:"You have not added about section."
-    },
-    skills:{
-        type:[String],
-        validate(value)
-        {
-            if(value.length>3)
-            {
-                throw new Error("you cant add more skills")
+    about: {
+        type: String,
+        default: "have not added about section.",
+        validate(value) {
+            const wordCount = value.trim().split(/\s+/).length;
+            if (wordCount > 50) {
+                throw new Error("The about section cannot exceed 100 words.");
             }
+        },
+    },
+    skills: {
+        type: [String],
+        validate: {
+          validator: function(value) {
+            if (value.length > 3) {
+              throw new Error("You can't add more than 3 skills");
+            }
+            return true; // Return true if validation passes
+          },
+          message: "You can't add more than 3 skills"
         }
-
     }
 
 },{

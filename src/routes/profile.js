@@ -8,7 +8,8 @@ profileRouter.get("/profile/view",userAuth,async(req,res)=>
         try
         {
             const user= req.user;
-            res.send("User profile is,"+user)
+            res.send({message:"User profile is,",
+                data:user})
     
         }
         catch(err)
@@ -17,28 +18,44 @@ profileRouter.get("/profile/view",userAuth,async(req,res)=>
         }
     })
 
-    profileRouter.post("/profile/edit",userAuth,async(req,res)=>
-    {
-        try
-        {
-
-            const userLoggedInData=req.user;
-            if(!validateEditProfileData(req))
-            {
-                throw new Error("Invalid edit request")
+    profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
+        try {
+            const userLoggedInData = req.user;
+    
+            // Optional validation for incoming edit requests
+            if (!validateEditProfileData(req)) {
+                throw new Error("Invalid edit request");
             }
-            const loggedInUser=req.user;
-            Object.keys(req.body).forEach(key=>loggedInUser[key]=req.body[key])
-            loggedInUser.save();
-            res.send({message:"Edited successfully",
-                data:loggedInUser
-            })
-
+    
+            // Update only the allowed fields
+            const allowedUpdates = ["firstName", "lastName", "age", "gender", "photoURL", "about", "skills"];
+            const updates = Object.keys(req.body);
+    
+            const isValidUpdate = updates.every((key) => allowedUpdates.includes(key));
+            if (!isValidUpdate) {
+                return res.status(400).send({ message: "Invalid fields in request body" });
+            }
+    
+            // Update user data
+            updates.forEach((key) => (userLoggedInData[key] = req.body[key]));
             
+            // Save the updated user and handle validation errors
+            await userLoggedInData.save();
+    
+            res.send({
+                message: "Edited successfully",
+                data: userLoggedInData,
+            });
+        } catch (error) {
+            if (error.name === "ValidationError") {
+                // Mongoose validation error
+                return res.status(400).send({ message: "Validation error", details: error.errors });
+            }
+            // General error
+            res.status(400).send({ message: "Error editing profile", details: error.message });
         }
-        catch(error)
-        {
-            res.status(400).send("ERROR:"+error.message)
-        }
-    })
+    });
+
+    
+    
 module.exports=profileRouter
