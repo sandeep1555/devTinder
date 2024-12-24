@@ -1,16 +1,16 @@
 require('dotenv').config({ path: "src/.env" });
 const express = require("express");
-const connectDB = require("./config/database");
+const connectDB = require("./src/config/database");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
 const app = express();
 
 // Routers
-const authRouter = require("./routes/auth");
-const profileRouter = require("./routes/profile");
-const requestRouter = require("./routes/request");
-const userRouter = require("./routes/user");
+const authRouter = require("./src/routes/auth");
+const profileRouter = require("./src/routes/profile");
+const requestRouter = require("./src/routes/request");
+const userRouter = require("./src/routes/user");
 
 // Middleware
 app.use(express.json());
