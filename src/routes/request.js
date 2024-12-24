@@ -15,7 +15,7 @@ requestRouter.post("/request/send/:status/:userid", userAuth, async (req, res) =
 
         const existedStatus = ["ignored", "interested"];
         if (!existedStatus.includes(status)) {
-    
+
             return res
                 .status(400)
                 .json({ message: "Invalid status type: " + status });
@@ -44,7 +44,7 @@ requestRouter.post("/request/send/:status/:userid", userAuth, async (req, res) =
         });
 
         const data = await connectionRequest.save();
-    
+
 
         res.json({
             message:

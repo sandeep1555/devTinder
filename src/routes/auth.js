@@ -19,7 +19,7 @@ authRouter.post("/signup", async (req, res) => {
         const hashPassword = await bcrypt.hash(password, 10)
 
         const user = new User({
-            firstName, lastName, emailId, password: hashPassword, age, photoURL:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqafzhnwwYzuOTjTlaYMeQ7hxQLy_Wq8dnQg&s"
+            firstName, lastName, emailId, password: hashPassword, age, photoURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqafzhnwwYzuOTjTlaYMeQ7hxQLy_Wq8dnQg&s"
         })
         const savedUser = await user.save();
         const token = await savedUser.getJWT();
@@ -47,7 +47,7 @@ authRouter.post("/login", async (req, res) => {
         const isValidPassword = await user.verifyPassword(password);
         if (isValidPassword) {
             const token = await user.getJWT();
-            res.cookie("token", token, {expires: new Date(Date.now() + 8 * 3600000),});
+            res.cookie("token", token, { expires: new Date(Date.now() + 8 * 3600000), });
             res.send({
                 message: "Login Successfully",
                 data: user,

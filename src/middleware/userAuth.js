@@ -1,29 +1,25 @@
+require('dotenv').config({ path: "src/.env" });
 const User = require("../models/user")
-const jwt=require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 
-const userAuth= async(req,res,next)=>
-    {
-        try
-        {
-        const {token} = req.cookies
-        if(!token)
-        {
-             return res.status(401).send("please login!")
+const userAuth = async (req, res, next) => {
+    try {
+        const { token } = req.cookies
+        if (!token) {
+            return res.status(401).send("please login!")
         }
-        const decodedObj=jwt.verify(token,"sandeep1@13")
-        const {_id}=decodedObj
-        const isUser=await User.findById(_id)
-        if(!isUser)
-        {
+        const decodedObj = jwt.verify(token, "sandeep1@13")
+        const { _id } = decodedObj
+        const isUser = await User.findById(_id)
+        if (!isUser) {
             throw new Error("User Not Found ")
         }
-        req.user=isUser;
+        req.user = isUser;
         next()
     }
-    catch(error)
-    {
+    catch (error) {
         res.status(400).send(error.message)
     }
-    }
+}
 
- module.exports={userAuth}   
+module.exports = { userAuth }   
