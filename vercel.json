@@ -1,6 +1,6 @@
 {
     "version": 2,
     "routes": [
-        { "src": "/(.*)", "dest": "/app.js", "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"] }
+        { "src": "/(.*)", "dest": "src/app.js", "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"] }
     ]
 }
