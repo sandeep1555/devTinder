@@ -5,7 +5,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
 const app = express();
-
+const PORT=process.env.PORT || 7777
 // Routers
 const authRouter = require("./src/routes/auth");
 const profileRouter = require("./src/routes/profile");
@@ -42,8 +42,8 @@ connectDB()
     .then(() => {
         console.log("DB Connection successfully");
         isDBConnected = true; // Set the flag when the DB is connected
-        app.listen(process.env.PORT, () => {
-            console.log(`Server connected on port ${process.env.PORT}`);
+        app.listen(PORT, () => {
+            console.log(`Server connected on port ${PORT}`);
         });
     })
     .catch((err) => {
