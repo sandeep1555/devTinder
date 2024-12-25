@@ -1,3 +1,4 @@
+require('dotenv').config({ path: "src/.env" });
 const express = require("express")
 const authRouter = express.Router();
 const { validateSignUpFeild } = require("../utils/vadilation");
@@ -47,7 +48,7 @@ authRouter.post("/login", async (req, res) => {
         const isValidPassword = await user.verifyPassword(password);
         if (isValidPassword) {
             const token = await user.getJWT();
-            res.cookie("token", token, { expires: new Date(Date.now() + 8 * 3600000), });
+            res.cookie("token", token, { expires: new Date(Date.now() + 8 * 3600000),secure:process.env.NODE_ENV === "production"});
             res.send({
                 message: "Login Successfully",
                 data: user,
