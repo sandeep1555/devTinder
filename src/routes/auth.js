@@ -25,7 +25,7 @@ authRouter.post("/signup", async (req, res) => {
         const savedUser = await user.save();
         const token = await savedUser.getJWT();
 
-        res.cookie("token", token, { expires: new Date(Date.now() + 8 * 3600000),secure:process.env.NODE_ENV === "production",httpOnly: true, secure: true,sameSite: 'None'});
+        res.cookie("token", token, { expires: new Date(Date.now() + 8 * 3600000), secure: process.env.NODE_ENV === "production", httpOnly: true, secure: true, sameSite: 'None' });
 
 
         res.json({ message: "User Added successfully!", data: savedUser });
@@ -47,17 +47,10 @@ authRouter.post("/login", async (req, res) => {
         const isValidPassword = await user.verifyPassword(password);
         if (isValidPassword) {
             const token = await user.getJWT();
-            res.cookie("token", token, {
-                expires: new Date(Date.now() + 8 * 3600000), // Set expiration for 8 hours
-                httpOnly: true, // Ensures the cookie cannot be accessed via JavaScript
-                secure: process.env.NODE_ENV === "production", // Only secure in production
-                sameSite: process.env.NODE_ENV === "production" ? 'None' : 'Lax', // Use 'None' for cross-origin in production
-                domain: process.env.NODE_ENV === "production" ? process.env.FE_DOMAIN : undefined, // Specify domain in production
-                // path: "/", // Ensure cookie is accessible across the entire site
-            });
+            res.cookie("token", token, { expires: new Date(Date.now() + 8 * 3600000), secure: process.env.NODE_ENV === "production", httpOnly: true, secure: true, sameSite: 'None' });
             // res.cookie("token", token, { expires: new Date(Date.now() + 8 * 3600000),secure:process.env.NODE_ENV === "production",httpOnly: true, secure: true,sameSite: 'None'});
 
-                        res.send({
+            res.send({
                 message: "Login Successfully",
                 data: user,
             }
