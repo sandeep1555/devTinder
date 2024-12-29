@@ -33,7 +33,7 @@ authRouter.post("/signup", async (req, res) => {
 
     }
     catch (err) {
-        res.status(401).send("ERROR : " + err.message)
+        res.status(401).send(err.message)
     }
 })
 
@@ -62,7 +62,7 @@ authRouter.post("/login", async (req, res) => {
 
     }
     catch (err) {
-        res.status(401).send("ERROR : " + err.message);
+        res.status(401).send(err.message);
     }
 })
 

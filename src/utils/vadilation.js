@@ -3,8 +3,12 @@ const validator = require("validator")
 const validateSignUpFeild = (body) => {
     const { firstName, lastName, emailId, password } = body
 
-    if (!firstName || !lastName) {
+    if (!firstName) {
         throw new Error("Enter your FirstName");
+    }
+    else if(!lastName)
+    {
+        throw new Error("Enter your LastName");
     }
     else if (!firstName > 3 || !firstName > 40) {
         throw new Error("FirstName characters should be in the range 3-40")
