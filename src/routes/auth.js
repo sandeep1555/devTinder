@@ -28,7 +28,7 @@ authRouter.post("/signup", async (req, res) => {
         res.cookie("token", token, { expires: new Date(Date.now() + 8 * 3600000), secure: process.env.NODE_ENV === "production", httpOnly: true, secure: true, sameSite: 'None' });
 
 
-        res.json({ message: "User Added successfully!", data: savedUser });
+        res.json({ message: "User Added successfully!", data: savedUser ,token:token});
 
 
     }
@@ -52,6 +52,7 @@ authRouter.post("/login", async (req, res) => {
 
             res.send({
                 message: "Login Successfully",
+                token:token,
                 data: user,
             }
             );
