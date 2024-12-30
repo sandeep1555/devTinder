@@ -5,89 +5,93 @@ const User = require("../models/user");
 const requestRouter = express.Router();
 
 
-requestRouter.post("/request/send/:status/:userid", userAuth, async (req, res) => {
-    try {
+requestRouter.post(
+    "/request/send/:status/:toUserId",
+    userAuth,
+    async (req, res) => {
+      try {
         const fromUserId = req.user._id;
-        const toUserId = req.params.userid;
-        const toUserDetails = await User.findById(toUserId);
+        const toUserId = req.params.toUserId;
         const status = req.params.status;
-
-
-        const existedStatus = ["ignored", "interested"];
-        if (!existedStatus.includes(status)) {
-
-            return res
-                .status(400)
-                .json({ message: "Invalid status type: " + status });
+  
+        const allowedStatus = ["ignored", "interested"];
+        if (!allowedStatus.includes(status)) {
+          return res
+            .status(400)
+            .json({ message: "Invalid status type: " + status });
         }
-
-        if (!toUserDetails) {
-            return res.status(404).json({ message: "User not found!" });
+  
+        const toUser = await User.findById(toUserId);
+        if (!toUser) {
+          return res.status(404).json({ message: "User not found!" });
         }
-
-        const validateConnectionRequest = await ConnectionRequest.findOne({
-            $or: [
-                { fromUserId, toUserId },
-                { fromUserId: toUserId, toUserId: fromUserId }
-            ]
+  
+        const existingConnectionRequest = await ConnectionRequest.findOne({
+          $or: [
+            { fromUserId, toUserId },
+            { fromUserId: toUserId, toUserId: fromUserId },
+          ],
         });
-
-
-        if (validateConnectionRequest) {
-            return res
-                .status(400)
-                .send({ message: "Connection Request Already Exists!!" });
+        if (existingConnectionRequest) {
+          return res
+            .status(400)
+            .send({ message: "Connection Request Already Exists!!" });
         }
-
+  
         const connectionRequest = new ConnectionRequest({
-            fromUserId, toUserId, status
+          fromUserId,
+          toUserId,
+          status,
         });
-
+  
         const data = await connectionRequest.save();
-
-
+  
         res.json({
-            message:
-                req.user.firstName + " is " + status + " in " + toUserDetails.firstName,
-            data,
+          message:
+            req.user.firstName + " is " + status + " in " + toUser.firstName,
+          data,
         });
-
-    } catch (error) {
-        res.status(400).send("ERROR: " + error.message);
+      } catch (err) {
+        res.status(400).send("ERROR: " + err.message);
+      }
     }
-});
+  );
 
 
-requestRouter.post("/request/review/:status/:requestId", userAuth, async (req, res) => {
-    try {
+  requestRouter.post(
+    "/request/review/:status/:requestId",
+    userAuth,
+    async (req, res) => {
+      try {
         const loggedInUser = req.user;
         const { status, requestId } = req.params;
-        const existedStatus = ["accepted", "rejected"];
-        if (!existedStatus.includes(status)) {
-            return res.status(400).send("Invalid status Request")
+  
+        const allowedStatus = ["accepted", "rejected"];
+        if (!allowedStatus.includes(status)) {
+          return res.status(400).json({ messaage: "Status not allowed!" });
         }
+  
         const connectionRequest = await ConnectionRequest.findOne({
-            _id: requestId,
-            toUserId: loggedInUser._id,
-            status: "interested",
-
-        })
+          _id: requestId,
+          toUserId: loggedInUser._id,
+          status: "interested",
+        });
         if (!connectionRequest) {
-            throw new Error("Connection request not found");
+          return res
+            .status(404)
+            .json({ message: "Connection request not found" });
         }
-
+  
         connectionRequest.status = status;
-        const data = await connectionRequest.save()
-        res.json({
-            message: "Connection accepted successfully",
-            data: data
-        })
+  
+        const data = await connectionRequest.save();
+  
+        res.json({ message: "Connection request " + status, data });
+      } catch (err) {
+        res.status(400).send("ERROR: " + err.message);
+      }
     }
-    catch (error) {
-        res.status(400).send("ERROR :" + error.message);
-    }
-
-})
+  );
 
 
 module.exports = requestRouter
