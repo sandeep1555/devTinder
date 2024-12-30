@@ -60,6 +60,7 @@ const userSchema = new mongoose.Schema({
     },
     skills: {
         type: [String],
+        default:"have not added skills",
         validate: {
             validator: function (value) {
                 if (value.length > 3) {
