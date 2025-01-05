@@ -5,12 +5,13 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
 const app = express();
-const PORT=process.env.PORT || 3000
+const PORT = process.env.PORT || 3000
 // Routers
 const authRouter = require("./src/routes/auth");
 const profileRouter = require("./src/routes/profile");
 const requestRouter = require("./src/routes/request");
 const userRouter = require("./src/routes/user");
+const messageRouter = require("./src/routes/messages")
 
 // Middleware
 app.use(express.json());
@@ -25,6 +26,7 @@ app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", requestRouter);
 app.use("/", userRouter);
+app.use("/", messageRouter);
 
 // Status endpoint to check if DB is connected
 let isDBConnected = false;

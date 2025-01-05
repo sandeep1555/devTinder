@@ -2,6 +2,7 @@ const express = require("express")
 const profileRouter = express.Router()
 const { userAuth } = require("../middleware/userAuth")
 const { validateEditProfileData } = require("../utils/vadilation")
+const User = require("../models/user")
 
 profileRouter.get("/profile/view", userAuth, async (req, res) => {
     try {
@@ -52,6 +53,29 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
         }
         // General error
         res.status(400).send({ message: "Error editing profile", details: error.message });
+    }
+});
+
+
+
+profileRouter.get("/profile/:userid", async (req, res) => {
+    try {
+        const { userid } = req.params;
+
+        // Find user by ID
+        const user = await User.findById(userid).select("-password");
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        res.status(200).json({
+            message: "profile is fetched",
+            data: user
+        });
+    } catch (error) {
+        console.error("Error fetching profile:", error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
