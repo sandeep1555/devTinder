@@ -1,4 +1,4 @@
-require('dotenv').config({ path: "src/.env" });
+require('dotenv').config();
 const express = require("express")
 const authRouter = express.Router();
 const { validateSignUpFeild } = require("../utils/vadilation");
