@@ -2,18 +2,29 @@ const express = require("express")
 const { userAuth } = require("../middleware/userAuth")
 
 const messageRouter = express.Router()
-const Messages = require("../models/messages")
+const {Messages} = require("../models/messages")
 
 
-messageRouter.post("/message/send/:receiverId", userAuth, async (req, res) => {
+messageRouter.get("/message/:receiverId", userAuth, async (req, res) => {
     try {
         const user = req.user;
-        const senderId = user._id;
-        const receiverId = req.params.receiverId;
-        const { content } = req.body;
-        const message = new Messages({ senderId, receiverId, content })
-        await message.save();
-        res.status(200).json({ message: 'Message sent!', data: message });
+        const userId = user._id;
+        const {receiverId} = req.params;
+        let chat = await Messages.findOne({
+            participants: { $all: [userId, receiverId] }
+        }).populate({
+            path: "messages.senderId",
+            select: "firstName lastName photoURL"
+
+        })
+        if (!chat) {
+            chat = new Messages({
+                participants: [userId, receiverId],
+                messages: [],
+            })
+        }
+        await chat.save();
+        res.status(200).json({ message: 'Message sent!', data: chat });
     }
     catch (error) {
         res.status(400).json({ error: error.message })

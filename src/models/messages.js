@@ -9,23 +9,24 @@ const messagesSchema = new mongoose.Schema(
             ref: 'User',
             require: true
         },
-        receiverId:
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User',
-            require: true
-        },
-        content:
+        text:
         {
             type: String,
             require: true
-        },
-        timeStamp:
-        {
-            type: Date,
-            default: Date.now
         }
-    })
-const messages = mongoose.model("Messages", messagesSchema)
+    },{timestamps:true})
 
-module.exports = messages
+
+ const chatSchema=new mongoose.Schema({
+    participants:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User",
+        require:true
+    }],
+    messages:[messagesSchema]
+ })  
+ 
+ 
+const Messages = mongoose.model("Messages", chatSchema)
+
+module.exports = {Messages}

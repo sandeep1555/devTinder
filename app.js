@@ -3,6 +3,7 @@ const connectDB = require("./src/config/database");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 require('dotenv').config();
+const http=require("http");
 
 const app = express();
 const PORT = process.env.PORT
@@ -11,14 +12,16 @@ const authRouter = require("./src/routes/auth");
 const profileRouter = require("./src/routes/profile");
 const requestRouter = require("./src/routes/request");
 const userRouter = require("./src/routes/user");
-const messageRouter = require("./src/routes/messages")
+const messageRouter = require("./src/routes/messages");
+const initailizeSocket = require("./src/utils/socket");
 
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
     origin: process.env.FE_ORIGIN,
-    credentials: true
+    credentials: true,
+    
 }));
 
 // Routes
@@ -39,12 +42,17 @@ app.get("/status", (req, res) => {
     }
 });
 
+
+const server=http.createServer(app);
+
+
+initailizeSocket(server)
 // Database connection
 connectDB()
     .then(() => {
         console.log("DB Connection successfully");
         isDBConnected = true; // Set the flag when the DB is connected
-        app.listen(PORT, () => {
+        server.listen(PORT, () => {
             console.log(`Server connected on port ${PORT}`);
         });
     })
