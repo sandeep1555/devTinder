@@ -3,14 +3,23 @@ const profileRouter = express.Router()
 const { userAuth } = require("../middleware/userAuth")
 const { validateEditProfileData } = require("../utils/vadilation")
 const User = require("../models/user")
+const ConnectionRequest = require("../models/connectionRequest")
 
 profileRouter.get("/profile/view", userAuth, async (req, res) => {
     try {
         const user = req.user;
+
+        const NumberOfRequests=await ConnectionRequest.countDocuments({
+            toUserId: user._id,
+            status: "interested",
+        })
+        const userObject = user.toObject();
+        userObject.request_count = NumberOfRequests;
         res.send({
             message: "User profile is,",
-            data: user
+            data: userObject
         })
+
 
     }
     catch (err) {
@@ -68,6 +77,8 @@ profileRouter.get("/profile/:userid", async (req, res) => {
         if (!user) {
             return res.status(404).json({ error: "User not found" });
         }
+
+
 
         res.status(200).json({
             message: "profile is fetched",

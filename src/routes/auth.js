@@ -4,6 +4,7 @@ const authRouter = express.Router();
 const { validateSignUpFeild } = require("../utils/vadilation");
 const bcrypt = require("bcrypt")
 const User = require("../models/user");
+const ConnectionRequest = require('../models/connectionRequest');
 
 
 authRouter.post("/signup", async (req, res) => {
@@ -50,10 +51,17 @@ authRouter.post("/login", async (req, res) => {
             res.cookie("token", token, { expires: new Date(Date.now() + 8 * 3600000), secure: process.env.NODE_ENV === "production", httpOnly: true, secure: true, sameSite: 'None' });
             // res.cookie("token", token, { expires: new Date(Date.now() + 8 * 3600000),secure:process.env.NODE_ENV === "production",httpOnly: true, secure: true,sameSite: 'None'});
 
+            const NumberOfRequests=await ConnectionRequest.countDocuments({
+                toUserId: user._id,
+                status: "interested",
+            })
+            const userObject = user.toObject();
+            userObject.request_count = NumberOfRequests;
+            
             res.send({
                 message: "Login Successfully",
                 token:token,
-                data: user,
+                data: userObject
             }
             );
         }

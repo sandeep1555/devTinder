@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 require('dotenv').config();
 const http=require("http");
+require("./src/utils/cronJobs");
 
 const app = express();
 const PORT = process.env.PORT
@@ -23,6 +24,8 @@ app.use(cors({
     credentials: true,
     
 }));
+
+
 
 // Routes
 app.use("/", authRouter);
